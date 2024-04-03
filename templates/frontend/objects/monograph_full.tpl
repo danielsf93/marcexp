@@ -95,7 +95,7 @@
 
 	<h1 class="title">
 		{$publication->getLocalizedFullTitle(null, 'html')|strip_unsafe_html}
-	</h1>MARCEXP
+	</h1>
 
 	<div class="row">
 		<div class="main_entry">
@@ -576,9 +576,108 @@
 
 <hr>
 
-<hr>
+
 
 <hr>
+
+<b>LDR= </b><br>
+{assign var="dataFormatada" value=$smarty.now|date_format:"%Y%m%d%H%M%S.0"}
+{assign var="zeroZeroCinco" value="$dataFormatada"}
+<b>005= </b>{$zeroZeroCinco}<br>
+{assign var="zeroZeroOito" value="      s2023    bl            000 0 por d"}
+<b>008= </b>{$zeroZeroOito}<br>
+
+{* Pegar o ISBN *}
+        {assign var="isbn" value=""}
+        {foreach $publication->getData('publicationFormats') as $publicationFormat}
+            {assign var="identificationCodes" value=$publicationFormat->getIdentificationCodes()}
+            {while $identificationCode = $identificationCodes->next()}
+                {if $identificationCode->getCode() == '02' || $identificationCode->getCode() == '15'}
+                    {assign var="isbn" value=$identificationCode->getValue()|replace:"-":""|replace:".":""}
+                    {break} {* Encerra o loop ao encontrar o ISBN *}
+                {/if}
+            {/while}
+        {/foreach}
+{assign var="zeroDoisZero" value="  a{if $isbn|trim}{$isbn}{else}{/if}"}
+<b>020= </b>{$zeroDoisZero}<br>
+
+{assign var="zeroDoisQuatro" value="a{$publication->getStoredPubId('doi')|escape}2DOI"}
+<b>024= </b>{$zeroDoisQuatro}<br>
+
+{assign var="zeroQuatroZero" value="  aUSP/ABCD"}
+<b>040= </b>{$zeroQuatroZero}<br>
+
+{assign var="zeroQuatroUm" value="apor  "}
+<b>041= </b>{$zeroQuatroUm}<br>
+
+{assign var="zeroQuatroQuatro" value="abl1"}
+<b>044= </b>{$zeroQuatroQuatro}<br>
+
+{* verificar*}
+<b>100= </b><br>
+
+{assign var="zeroDoisQuatro" value="a{$publication->getStoredPubId('doi')|escape}2DOI"}
+<b>245= </b>{$zeroDoisQuatro}<br>
+
+{assign var="zeroQuatroZero" value="  aUSP/ABCD"}
+<b>260= </b>{$zeroQuatroZero}<br>
+
+{assign var="quatroNoveZero" value=""}
+{if $series}
+    {assign var="seriesTitle" value=$series->getLocalizedFullTitle()}
+    {if $seriesTitle}
+        {assign var="quatroNoveZero" value="a {$seriesTitle}"}
+    {/if}
+{else}
+    {assign var="quatroNoveZero" value="a "}
+{/if}
+
+{if $publication->getData('seriesPosition')}
+    {assign var="quatroNoveZero" value=$quatroNoveZero|cat:"v {$publication->getData('seriesPosition')}"}
+{else}
+    {assign var="quatroNoveZero" value=$quatroNoveZero|cat:"v "}
+{/if}
+
+{assign var="quatroNoveZero" value=$quatroNoveZero|cat:"  "}
+<b>490= </b>{$quatroNoveZero}<br>
+
+{assign var="cincoZeroZero" value="aDisponível em: http://{$smarty.server.HTTP_HOST}{$smarty.server.REQUEST_URI}. Acesso em: {$smarty.now|date_format:"%d.%m.%Y"}"}
+<b>500= </b>{$cincoZeroZero}<br>
+
+<b>700= </b><br>
+
+{assign var="oitoCincoMeiaA" value="4 zClicar sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
+<b>856a= </b>{$oitoCincoMeiaA}<br>
+
+{assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completouhttp://0.0.0.0:8888/index.php/portaldelivrosUSP/catalog/view/8/8/433Portal de Livros Abertos da USP  "}
+<b>856b= </b>{$oitoCincoMeiaB}<br>
+
+{assign var="noveQuatroCinco" value="aPbMONOGRAFIA/LIVROc06j2023lNACIONAL"}
+<b>945= </b>{$noveQuatroCinco}<br>
+<hr>
+ <button id="downloadButton" class="botao">Baixar Arquivo MARC</button>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var downloadButton = document.getElementById('downloadButton');
+        downloadButton.addEventListener('click', function() {
+var text = "00972nam 22000205a 4500 {$zeroZeroCinco|escape:'javascript'}{$zeroZeroOito|escape:'javascript'}{$zeroDoisZero|escape:'javascript'}{$zeroDoisQuatro|escape:'javascript'}";            var fileName = 'ompBlock.mrc'; // Nome do arquivo a ser baixado
+
+            var blob = new Blob([text], { type: 'text/plain' });
+            if (window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveBlob(blob, fileName);
+            } else {
+                var elem = window.document.createElement('a');
+                elem.href = window.URL.createObjectURL(blob);
+                elem.download = fileName;
+                document.body.appendChild(elem);
+                elem.click();
+                document.body.removeChild(elem);
+            }
+        });
+    });
+</script>
+
 
 
 
