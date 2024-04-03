@@ -578,6 +578,24 @@
 
 
 
+{* Any non-chapter files and remote resources *}
+			{pluck_files assign=bookFiles files=$availableFiles by="chapter" value=0}
+			{if $bookFiles|@count || $remotePublicationFormats|@count}
+				<div class="item files">
+					<h2 class="pkp_screen_reader">
+						{translate key="submission.downloads"}
+					</h2>
+					{include file="frontend/components/publicationFormats.tpl" publicationFiles=$bookFiles}
+				</div>
+			{/if}
+
+
+
+
+
+
+
+
 <hr>
 
 <b>LDR= </b><br>
@@ -649,7 +667,20 @@
 {assign var="oitoCincoMeiaA" value="4 zClicar sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
 <b>856a= </b>{$oitoCincoMeiaA}<br>
 
-{assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completouhttp://0.0.0.0:8888/index.php/portaldelivrosUSP/catalog/view/8/8/433Portal de Livros Abertos da USP  "}
+{foreach from=$publicationFormats item=format}
+    {assign var=publicationFormatId value=$format->getId()}
+    {pluck_files assign=pubFormatFiles files=$nonChapterFiles by="publicationFormat" value=$format->getId()}
+    {if $pubFormatFiles|@count == 1}
+      
+            {if $publication->getId() === $monograph->getCurrentPublication()->getId()}
+                {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:$publicationFormatId:$file->getBestId()}{/capture}
+            {else}
+                {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:"version":$publication->getId():$publicationFormatId:$file->getBestId()}{/capture}
+            {/if}
+     {assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completou{$downloadUrl}3Portal de Livros Abertos da USP  "}
+    {/if}
+{/foreach}
+
 <b>856b= </b>{$oitoCincoMeiaB}<br>
 
 {assign var="noveQuatroCinco" value="aPbMONOGRAFIA/LIVROc06j2023lNACIONAL"}
