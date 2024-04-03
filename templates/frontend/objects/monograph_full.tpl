@@ -578,17 +578,10 @@
 
 
 
-{* Any non-chapter files and remote resources *}
-			{pluck_files assign=bookFiles files=$availableFiles by="chapter" value=0}
-			{if $bookFiles|@count || $remotePublicationFormats|@count}
-				<div class="item files">
-					<h2 class="pkp_screen_reader">
-						{translate key="submission.downloads"}
-					</h2>
-					{include file="frontend/components/publicationFormats.tpl" publicationFiles=$bookFiles}
-				</div>
-			{/if}
 
+
+
+					
 
 
 
@@ -666,6 +659,49 @@
 
 {assign var="oitoCincoMeiaA" value="4 zClicar sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
 <b>856a= </b>{$oitoCincoMeiaA}<br>
+
+
+
+
+
+
+
+aaaaaaaaa<br><br>
+
+
+{$publicationFiles=$bookFiles}
+					{foreach from=$publicationFormats item=format}
+	{assign var=publicationFormatId value=$format->getId()}
+
+
+	{* File downloads *}
+	
+		{pluck_files assign=pubFormatFiles files=$publicationFiles by="publicationFormat" value=$format->getId()}
+
+		{* Use a simplified presentation if only one file exists *}
+		{if $pubFormatFiles|@count == 1}
+			<div class="pub_format_{$publicationFormatId|escape} pub_format_single">
+				{foreach from=$pubFormatFiles item=file}
+					{include file="frontend/components/downloadLink.tpl" downloadFile=$file monograph=$monograph publication=$publication publicationFormat=$format currency=$currency}
+				
+				
+				{/foreach}
+			</div>
+
+			
+	{/if}
+{/foreach}
+
+
+
+<br><br>
+
+
+
+
+
+
+
 
 {foreach from=$publicationFormats item=format}
     {assign var=publicationFormatId value=$format->getId()}
