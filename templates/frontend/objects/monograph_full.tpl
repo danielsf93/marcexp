@@ -662,8 +662,8 @@
 
 
 
-<b>856b= </b>
-botao comeca aqui:
+
+
 {$publicationFiles=$bookFiles}
 {foreach from=$publicationFormats item=format}
     {pluck_files assign=pubFormatFiles files=$publicationFiles by="publicationFormat" value=$format->getId()}
@@ -676,28 +676,14 @@ botao comeca aqui:
         {else}
             {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:"version":$publication->getId():$publicationFormatId:$file->getBestId()}{/capture}
         {/if}
-
-        {* Display the download link *}
-        <a href="{$downloadUrl}" class="cmp_download_link">
-            {if $useFilename}
-                {$file->getLocalizedData('name')}
-            {else}
-                {if $file->getDirectSalesPrice() && $currency}{$file->getDirectSalesPrice()}
-                    {translate key="payment.directSales.purchase" format=$publicationFormat->getLocalizedName() amount=$file->getDirectSalesPrice() currency=$currency->getLetterCode()}
-                {else}
-                    {$publicationFormat->getLocalizedName()}
-                {/if}
-            {/if}
-        </a>
     {/foreach}
 {/foreach}
 
+{assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completou{$downloadUrl}3Portal de Livros Abertos da USP  "}
+<b>856b= </b>{$oitoCincoMeiaB}<br>
 
 
-<br>
-x{$downloadUrl}y
 
-botao termina aqui
 
 
 
@@ -715,7 +701,8 @@ botao termina aqui
     document.addEventListener('DOMContentLoaded', function() {
         var downloadButton = document.getElementById('downloadButton');
         downloadButton.addEventListener('click', function() {
-var text = "00972nam 22000205a 4500 {$zeroZeroCinco|escape:'javascript'}{$zeroZeroOito|escape:'javascript'}{$zeroDoisZero|escape:'javascript'}{$zeroDoisQuatro|escape:'javascript'}";            var fileName = 'ompBlock.mrc'; // Nome do arquivo a ser baixado
+var text = "00972nam 22000205a 4500 {$zeroZeroCinco|escape:'javascript'}{$zeroZeroOito|escape:'javascript'}{$zeroDoisZero|escape:'javascript'}{$zeroQuatroZero|escape:'javascript'}{$zeroQuatroUm|escape:'javascript'}{$zeroQuatroQuatro|escape:'javascript'}{$umZeroZero|escape:'javascript'}{$doisQuatroCinco|escape:'javascript'}{$doisMeiaZero|escape:'javascript'}{$cincoZeroZero|escape:'javascript'}{$seteZeroZero|escape:'javascript'}{$oitoCincoMeiaA|escape:'javascript'}{$oitoCincoMeiaB|escape:'javascript'}{$noveQuatroCinco|escape:'javascript'}";
+var fileName = 'ompBlock.mrc'; // Nome do arquivo a ser baixado
 
             var blob = new Blob([text], { type: 'text/plain' });
             if (window.navigator.msSaveOrOpenBlob) {
