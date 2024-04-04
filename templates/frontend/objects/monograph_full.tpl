@@ -577,11 +577,26 @@
 <hr>
 
 
+Teste:<br>
 
 
 
-
-					
+		{foreach from=$publication->getData('authors') item=author}
+						
+							<div class="sub_item">
+								<div class="label">
+									Nome: {$author->getLocalizedGivenName()|escape}<br>
+                 					Sobrenome: {$author->getLocalizedFamilyName()|escape}<br>
+									Afiliação: {$author->getLocalizedAffiliation()|escape}<br>
+									Orcid: {$author->getOrcid()|escape}<br>
+									País: {$author->getCountryLocalized()|escape}<br>
+										
+									
+								</div>
+								
+							</div>
+						
+					{/foreach}			
 
 
 
@@ -625,7 +640,8 @@
 <b>044= </b>{$zeroQuatroQuatro}<br>
 
 {* verificar*}
-<b>100= primeiro autor </b><br>
+{assign var="umZeroZero" value="primeiro autor"}
+<b>100= {$umZeroZero} </b><br>
 
 {assign var="doisQuatroCinco" value="10a{$publication->getLocalizedFullTitle(null, 'html')|strip_unsafe_html}h[recurso eletrônico]  "}
 <b>245= </b>{$doisQuatroCinco}<br>
