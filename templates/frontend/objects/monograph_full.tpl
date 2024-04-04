@@ -625,10 +625,10 @@
 <b>044= </b>{$zeroQuatroQuatro}<br>
 
 {* verificar*}
-<b>100= </b><br>
+<b>100= primeiro autor </b><br>
 
-{assign var="zeroDoisQuatro" value="a{$publication->getStoredPubId('doi')|escape}2DOI"}
-<b>245= </b>{$zeroDoisQuatro}<br>
+{assign var="doisQuatroCinco" value="10a{$publication->getLocalizedFullTitle(null, 'html')|strip_unsafe_html}h[recurso eletrônico]  "}
+<b>245= </b>{$doisQuatroCinco}<br>
 
 {assign var="zeroQuatroZero" value="  aUSP/ABCD"}
 <b>260= </b>{$zeroQuatroZero}<br>
@@ -655,69 +655,56 @@
 {assign var="cincoZeroZero" value="aDisponível em: http://{$smarty.server.HTTP_HOST}{$smarty.server.REQUEST_URI}. Acesso em: {$smarty.now|date_format:"%d.%m.%Y"}"}
 <b>500= </b>{$cincoZeroZero}<br>
 
-<b>700= </b><br>
+<b>700= demais autores</b><br>
 
 {assign var="oitoCincoMeiaA" value="4 zClicar sobre o botão para acesso ao texto completouhttps://doi.org/{$publication->getStoredPubId('doi')|escape}3DOI"}
 <b>856a= </b>{$oitoCincoMeiaA}<br>
 
 
 
-
-
-
-
-aaaaaaaaa<br><br>
-
-
+<b>856b= </b>
+botao comeca aqui:
 {$publicationFiles=$bookFiles}
-					{foreach from=$publicationFormats item=format}
-	{assign var=publicationFormatId value=$format->getId()}
-
-
-	{* File downloads *}
-	
-		{pluck_files assign=pubFormatFiles files=$publicationFiles by="publicationFormat" value=$format->getId()}
-
-		{* Use a simplified presentation if only one file exists *}
-		{if $pubFormatFiles|@count == 1}
-			<div class="pub_format_{$publicationFormatId|escape} pub_format_single">
-				{foreach from=$pubFormatFiles item=file}
-					{include file="frontend/components/downloadLink.tpl" downloadFile=$file monograph=$monograph publication=$publication publicationFormat=$format currency=$currency}
-				
-				
-				{/foreach}
-			</div>
-
-			
-	{/if}
-{/foreach}
-
-
-
-<br><br>
-
-
-
-
-
-
-
-
 {foreach from=$publicationFormats item=format}
-    {assign var=publicationFormatId value=$format->getId()}
-    {pluck_files assign=pubFormatFiles files=$nonChapterFiles by="publicationFormat" value=$format->getId()}
-    {if $pubFormatFiles|@count == 1}
-      
-            {if $publication->getId() === $monograph->getCurrentPublication()->getId()}
-                {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:$publicationFormatId:$file->getBestId()}{/capture}
+    {pluck_files assign=pubFormatFiles files=$publicationFiles by="publicationFormat" value=$format->getId()}
+    {foreach from=$pubFormatFiles item=file}
+        {assign var=publicationFormatId value=$publicationFormat->getBestId()}
+
+        {* Generate the download URL *}
+        {if $publication->getId() === $monograph->getCurrentPublication()->getId()}
+            {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:$publicationFormatId:$file->getBestId()}{/capture}
+        {else}
+            {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:"version":$publication->getId():$publicationFormatId:$file->getBestId()}{/capture}
+        {/if}
+
+        {* Display the download link *}
+        <a href="{$downloadUrl}" class="cmp_download_link">
+            {if $useFilename}
+                {$file->getLocalizedData('name')}
             {else}
-                {capture assign=downloadUrl}{url op="view" path=$monograph->getBestId()|to_array:"version":$publication->getId():$publicationFormatId:$file->getBestId()}{/capture}
+                {if $file->getDirectSalesPrice() && $currency}{$file->getDirectSalesPrice()}
+                    {translate key="payment.directSales.purchase" format=$publicationFormat->getLocalizedName() amount=$file->getDirectSalesPrice() currency=$currency->getLetterCode()}
+                {else}
+                    {$publicationFormat->getLocalizedName()}
+                {/if}
             {/if}
-     {assign var="oitoCincoMeiaB" value="41zClicar sobre o botão para acesso ao texto completou{$downloadUrl}3Portal de Livros Abertos da USP  "}
-    {/if}
+        </a>
+    {/foreach}
 {/foreach}
 
-<b>856b= </b>{$oitoCincoMeiaB}<br>
+
+
+<br>
+x{$downloadUrl}y
+
+botao termina aqui
+
+
+
+
+
+
+
 
 {assign var="noveQuatroCinco" value="aPbMONOGRAFIA/LIVROc06j2023lNACIONAL"}
 <b>945= </b>{$noveQuatroCinco}<br>
